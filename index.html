@@ -1,0 +1,687 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>RAKI Agency</title>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,400&family=Montserrat:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+*{margin:0;padding:0;box-sizing:border-box;}
+:root{
+  --gold:#C9A84C;--gold-l:#E8D08A;--gold-d:#8B6914;
+  --black:#080808;--deep:#0D0D0D;--char:#1A1A1A;
+  --white:#F5F0E8;--muted:#888880;
+}
+html{scroll-behavior:smooth;}
+body{background:var(--black);color:var(--white);font-family:'Montserrat',sans-serif;overflow-x:hidden;cursor:none;}
+
+/* CURSOR */
+#cur{position:fixed;width:8px;height:8px;background:var(--gold);border-radius:50%;pointer-events:none;z-index:9999;transform:translate(-50%,-50%);transition:width .25s,height .25s;}
+#cur-ring{position:fixed;width:36px;height:36px;border:1px solid var(--gold);border-radius:50%;pointer-events:none;z-index:9998;transform:translate(-50%,-50%);opacity:.5;transition:width .25s,height .25s,opacity .25s;}
+
+/* NAV */
+nav{position:fixed;top:0;left:0;right:0;z-index:200;padding:24px 60px;display:flex;align-items:center;justify-content:space-between;transition:background .4s,padding .4s;}
+nav.scrolled{background:rgba(8,8,8,.97);padding:16px 60px;border-bottom:1px solid rgba(201,168,76,.15);}
+.logo{font-family:'Cormorant Garamond',serif;font-size:32px;font-weight:300;letter-spacing:.4em;color:var(--gold);text-transform:uppercase;}
+.nav-links{display:flex;gap:40px;list-style:none;}
+.nav-links a{font-size:10px;font-weight:500;letter-spacing:.25em;text-transform:uppercase;color:var(--muted);text-decoration:none;transition:color .3s;position:relative;}
+.nav-links a::after{content:'';position:absolute;bottom:-4px;left:0;width:0;height:1px;background:var(--gold);transition:width .3s;}
+.nav-links a:hover{color:var(--gold);}
+.nav-links a:hover::after{width:100%;}
+.nav-cta{font-size:10px;font-weight:600;letter-spacing:.25em;text-transform:uppercase;color:var(--black);background:var(--gold);border:none;padding:13px 30px;cursor:none;transition:background .3s,transform .3s,box-shadow .3s;}
+.nav-cta:hover{background:var(--gold-l);transform:scale(1.04);box-shadow:0 12px 30px rgba(201,168,76,.3);}
+
+/* SECTIONS */
+section{padding:130px 60px;position:relative;}
+.s-tag{font-size:10px;font-weight:500;letter-spacing:.35em;color:var(--gold);text-transform:uppercase;display:flex;align-items:center;gap:14px;margin-bottom:22px;}
+.s-tag::before{content:'';width:30px;height:1px;background:var(--gold);}
+.s-tag.center{justify-content:center;}
+.s-tag.center::before{display:none;}
+h2{font-family:'Cormorant Garamond',serif;font-size:clamp(40px,5vw,66px);font-weight:300;line-height:1.05;}
+h2 em{font-style:italic;color:var(--gold);}
+
+/* REVEAL */
+.rv{opacity:0;transform:translateY(50px);transition:opacity 1s ease,transform 1s ease;}
+.rv.in{opacity:1;transform:translateY(0);}
+.rv2{opacity:0;transform:translateY(50px);transition:opacity 1s .2s ease,transform 1s .2s ease;}
+.rv2.in{opacity:1;transform:translateY(0);}
+.rv3{opacity:0;transform:translateY(50px);transition:opacity 1s .4s ease,transform 1s .4s ease;}
+.rv3.in{opacity:1;transform:translateY(0);}
+
+/* ===================== HERO ===================== */
+#hero{height:100vh;min-height:700px;display:flex;align-items:center;overflow:hidden;}
+.hero-bg{position:absolute;inset:0;background:var(--black);}
+
+/* Particle canvas */
+#particles{position:absolute;inset:0;z-index:0;}
+
+/* Glowing lines */
+.glow-line{position:absolute;height:1px;background:linear-gradient(to right,transparent,var(--gold),transparent);opacity:0;animation:glowLine 6s ease-in-out infinite;}
+.gl1{width:60%;top:30%;left:20%;animation-delay:0s;}
+.gl2{width:40%;top:55%;left:30%;animation-delay:2s;}
+.gl3{width:50%;top:70%;left:25%;animation-delay:4s;}
+@keyframes glowLine{0%,100%{opacity:0;transform:scaleX(0);}50%{opacity:.3;transform:scaleX(1);}}
+
+/* 3D Sphere */
+.sphere-wrap{position:absolute;right:8%;top:50%;transform:translateY(-50%);width:320px;height:320px;perspective:700px;}
+.sphere{width:100%;height:100%;position:relative;transform-style:preserve-3d;animation:sphereSpin 20s linear infinite;}
+.ring-orbit{position:absolute;inset:0;border-radius:50%;border:1px solid rgba(201,168,76,.35);transform-style:preserve-3d;}
+.r1{animation:orb1 8s linear infinite;}
+.r2{transform:rotateY(60deg);animation:orb2 12s linear infinite;}
+.r3{transform:rotateY(120deg);animation:orb1 16s linear infinite reverse;}
+.r4{transform:rotateX(80deg);animation:orb2 10s linear infinite;}
+.r5{transform:rotateX(40deg) rotateY(80deg);border-color:rgba(201,168,76,.15);animation:orb1 22s linear infinite;}
+.sphere-core{position:absolute;inset:30px;border-radius:50%;background:radial-gradient(circle at 35% 35%,rgba(201,168,76,.25),rgba(201,168,76,.05) 60%,transparent);border:1px solid rgba(201,168,76,.3);}
+@keyframes orb1{to{transform:rotateZ(360deg);}}
+@keyframes orb2{to{transform:rotateY(60deg) rotateZ(360deg);}}
+@keyframes sphereSpin{to{transform:rotateY(360deg);}}
+
+/* Floating orbs */
+.orb{position:absolute;border-radius:50%;background:radial-gradient(circle,rgba(201,168,76,.12),transparent 70%);animation:floatOrb 9s ease-in-out infinite;pointer-events:none;}
+.o1{width:500px;height:500px;top:-15%;left:-10%;animation-delay:0s;}
+.o2{width:300px;height:300px;bottom:5%;left:35%;animation-delay:3.5s;}
+.o3{width:200px;height:200px;top:15%;right:20%;animation-delay:6s;}
+@keyframes floatOrb{0%,100%{transform:translateY(0);}50%{transform:translateY(-25px);}}
+
+.hero-content{position:relative;z-index:2;padding-left:60px;max-width:700px;}
+.hero-tag{font-size:10px;font-weight:500;letter-spacing:.35em;color:var(--gold);text-transform:uppercase;display:flex;align-items:center;gap:14px;margin-bottom:40px;opacity:0;animation:fuUp .9s .2s forwards;}
+.hero-tag::before{content:'';width:40px;height:1px;background:var(--gold);}
+
+/* Typewriter headline */
+#hero-h1{font-family:'Cormorant Garamond',serif;font-size:clamp(58px,8vw,96px);font-weight:300;line-height:1.03;opacity:0;animation:fuUp .9s .4s forwards;}
+#hero-h1 em{font-style:italic;color:var(--gold);}
+.cursor-blink{display:inline-block;width:3px;height:.8em;background:var(--gold);animation:blink .8s step-end infinite;vertical-align:middle;margin-left:4px;}
+@keyframes blink{50%{opacity:0;}}
+
+.hero-sub{font-size:13px;font-weight:300;letter-spacing:.1em;color:var(--muted);line-height:2.1;margin-top:30px;max-width:420px;opacity:0;animation:fuUp .9s .8s forwards;}
+.hero-btns{display:flex;gap:18px;margin-top:50px;opacity:0;animation:fuUp .9s 1s forwards;}
+.btn-p{background:var(--gold);color:var(--black);font-size:10px;font-weight:700;letter-spacing:.3em;text-transform:uppercase;padding:18px 44px;border:none;cursor:none;transition:all .3s;}
+.btn-p:hover{background:var(--gold-l);transform:translateY(-3px);box-shadow:0 20px 50px rgba(201,168,76,.3);}
+.btn-g{background:transparent;color:var(--white);font-size:10px;font-weight:500;letter-spacing:.3em;text-transform:uppercase;padding:18px 44px;border:1px solid rgba(245,240,232,.2);cursor:none;transition:all .3s;}
+.btn-g:hover{border-color:var(--gold);color:var(--gold);}
+
+@keyframes fuUp{from{opacity:0;transform:translateY(32px);}to{opacity:1;transform:translateY(0);}}
+
+.scroll-hint{position:absolute;bottom:40px;left:50%;transform:translateX(-50%);display:flex;flex-direction:column;align-items:center;gap:8px;font-size:9px;letter-spacing:.35em;color:var(--muted);text-transform:uppercase;z-index:2;}
+.scroll-line{width:1px;height:55px;background:linear-gradient(to bottom,var(--gold),transparent);animation:sLine 2s ease-in-out infinite;}
+@keyframes sLine{0%{transform:scaleY(0);transform-origin:top;}50%{transform:scaleY(1);transform-origin:top;}51%{transform-origin:bottom;}100%{transform:scaleY(0);transform-origin:bottom;}}
+
+/* ===================== STATS ===================== */
+#stats{padding:50px 60px;background:var(--char);border-top:1px solid rgba(201,168,76,.18);border-bottom:1px solid rgba(201,168,76,.18);display:grid;grid-template-columns:repeat(4,1fr);}
+.stat{text-align:center;padding:20px;border-right:1px solid rgba(255,255,255,.05);}
+.stat:last-child{border-right:none;}
+.stat-n{font-family:'Cormorant Garamond',serif;font-size:56px;font-weight:300;color:var(--gold);line-height:1;}
+.stat-n sup{font-size:28px;}
+.stat-l{font-size:9px;letter-spacing:.3em;color:var(--muted);text-transform:uppercase;margin-top:8px;}
+
+/* ===================== ABOUT / MANIFESTO ===================== */
+#about{background:var(--deep);overflow:hidden;}
+.about-grid{display:grid;grid-template-columns:1fr 1fr;gap:100px;align-items:center;}
+.about-left{}
+.about-right{position:relative;}
+.about-visual{
+  width:100%;aspect-ratio:1;
+  position:relative;
+  display:flex;align-items:center;justify-content:center;
+}
+/* Diamond 3D */
+.diamond-scene{width:220px;height:220px;perspective:600px;margin:0 auto;}
+.diamond{width:100%;height:100%;transform-style:preserve-3d;animation:diamondSpin 12s linear infinite;}
+.d-face{position:absolute;border:1px solid rgba(201,168,76,.4);background:rgba(201,168,76,.04);}
+.df1{width:220px;height:220px;transform:rotateX(45deg) rotateZ(45deg) translateZ(0);}
+.df2{width:220px;height:220px;transform:rotateX(45deg) rotateZ(45deg) rotateY(90deg) translateZ(0);}
+.df3{width:220px;height:220px;transform:rotateX(45deg) rotateZ(45deg) rotateX(90deg) translateZ(0);}
+@keyframes diamondSpin{to{transform:rotateY(360deg) rotateX(20deg);}}
+
+.about-circles{position:absolute;inset:0;pointer-events:none;}
+.a-ring{position:absolute;border-radius:50%;border:1px solid rgba(201,168,76,.12);top:50%;left:50%;transform:translate(-50%,-50%);}
+.ar1{width:280px;height:280px;animation:pulse 4s ease-in-out infinite;}
+.ar2{width:340px;height:340px;animation:pulse 4s 1.3s ease-in-out infinite;}
+.ar3{width:400px;height:400px;animation:pulse 4s 2.6s ease-in-out infinite;}
+@keyframes pulse{0%,100%{opacity:.12;}50%{opacity:.35;}}
+
+.about-text-large{font-family:'Cormorant Garamond',serif;font-size:clamp(32px,4vw,52px);font-weight:300;line-height:1.2;margin-bottom:30px;}
+.about-text-large em{font-style:italic;color:var(--gold);}
+.about-body{font-size:13px;color:var(--muted);line-height:2.1;letter-spacing:.04em;margin-bottom:28px;}
+.about-values{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-top:40px;}
+.av-item{padding:20px;border:1px solid rgba(201,168,76,.15);position:relative;overflow:hidden;transition:border-color .3s;}
+.av-item::before{content:'';position:absolute;top:0;left:0;width:2px;height:0;background:var(--gold);transition:height .4s;}
+.av-item:hover::before{height:100%;}
+.av-item:hover{border-color:rgba(201,168,76,.4);}
+.av-title{font-family:'Cormorant Garamond',serif;font-size:18px;font-weight:400;margin-bottom:8px;}
+.av-desc{font-size:11px;color:var(--muted);line-height:1.8;}
+
+/* ===================== SERVICES ===================== */
+#services{background:var(--black);}
+.srv-header{display:grid;grid-template-columns:1fr 1fr;gap:60px;align-items:end;margin-bottom:80px;}
+.srv-desc{font-size:13px;color:var(--muted);line-height:2.1;max-width:380px;}
+.srv-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:1px;background:rgba(201,168,76,.08);}
+.srv-card{background:var(--black);padding:52px 40px;position:relative;overflow:hidden;transition:background .4s;cursor:none;}
+.srv-card::after{content:'';position:absolute;bottom:0;left:0;right:0;height:2px;background:linear-gradient(to right,transparent,var(--gold),transparent);transform:scaleX(0);transition:transform .5s;}
+.srv-card:hover::after{transform:scaleX(1);}
+.srv-card::before{content:'';position:absolute;inset:0;background:linear-gradient(135deg,rgba(201,168,76,.06),transparent);opacity:0;transition:opacity .4s;}
+.srv-card:hover::before{opacity:1;}
+.srv-card:hover{background:#0e0e0e;}
+.srv-num{font-family:'Cormorant Garamond',serif;font-size:54px;font-weight:300;color:rgba(201,168,76,.1);line-height:1;margin-bottom:22px;transition:color .3s;}
+.srv-card:hover .srv-num{color:rgba(201,168,76,.25);}
+.srv-title{font-family:'Cormorant Garamond',serif;font-size:24px;font-weight:400;margin-bottom:14px;}
+.srv-desc2{font-size:12px;color:var(--muted);line-height:2;letter-spacing:.04em;}
+.srv-arr{margin-top:28px;font-size:10px;letter-spacing:.2em;color:var(--gold);text-transform:uppercase;display:flex;align-items:center;gap:10px;opacity:0;transform:translateX(-12px);transition:all .3s;}
+.srv-card:hover .srv-arr{opacity:1;transform:translateX(0);}
+.srv-arr::after{content:'→';}
+
+/* ===================== WORK ===================== */
+#work{background:var(--deep);}
+.work-intro{display:grid;grid-template-columns:1fr 1fr;gap:60px;align-items:end;margin-bottom:70px;}
+.work-link{font-size:10px;letter-spacing:.25em;color:var(--gold);text-transform:uppercase;text-decoration:none;display:flex;align-items:center;gap:10px;align-self:flex-end;transition:gap .3s;}
+.work-link:hover{gap:18px;}
+.work-link::after{content:'→';}
+.work-grid{display:grid;grid-template-columns:1.2fr 1fr;grid-template-rows:auto auto;gap:20px;}
+.wc{position:relative;overflow:hidden;cursor:none;}
+.wc:first-child{grid-row:span 2;}
+.wc-inner{width:100%;height:100%;transition:transform .7s cubic-bezier(.23,1,.32,1);}
+.wc:hover .wc-inner{transform:scale(1.06) rotateY(-2deg) rotateX(1.5deg);}
+.w1{background:linear-gradient(150deg,#1a0e00,#3d2400,#6b4010);min-height:480px;}
+.w2{background:linear-gradient(150deg,#000d1a,#001d3d,#003070);min-height:230px;}
+.w3{background:linear-gradient(150deg,#0d0014,#1e0030,#3d0060);min-height:230px;}
+.wc-pattern{position:absolute;inset:0;opacity:.12;background-image:repeating-linear-gradient(45deg,rgba(201,168,76,.4) 0,rgba(201,168,76,.4) 1px,transparent 0,transparent 50%);background-size:18px 18px;}
+.wc-geo{position:absolute;top:28px;right:28px;width:70px;height:70px;border:1px solid rgba(201,168,76,.4);transform:rotate(45deg);animation:rotateSlow 24s linear infinite;}
+.wc-geo::before{content:'';position:absolute;inset:10px;border:1px solid rgba(201,168,76,.2);}
+@keyframes rotateSlow{to{transform:rotate(405deg);}}
+.wc-overlay{position:absolute;inset:0;background:linear-gradient(to top,rgba(8,8,8,.92) 0%,rgba(8,8,8,.1) 55%,transparent);display:flex;flex-direction:column;justify-content:flex-end;padding:36px 32px;transform:translateY(8px);transition:transform .4s;}
+.wc:hover .wc-overlay{transform:translateY(0);}
+.wc-cat{font-size:9px;letter-spacing:.35em;color:var(--gold);text-transform:uppercase;margin-bottom:10px;}
+.wc-title{font-family:'Cormorant Garamond',serif;font-size:28px;font-weight:300;}
+.wc-sub{font-size:11px;color:var(--muted);margin-top:8px;opacity:0;transform:translateY(10px);transition:all .4s .1s;}
+.wc:hover .wc-sub{opacity:1;transform:translateY(0);}
+
+/* ===================== MARQUEE ===================== */
+#marquee{padding:0;overflow:hidden;background:var(--char);border-top:1px solid rgba(201,168,76,.12);border-bottom:1px solid rgba(201,168,76,.12);}
+.marquee-track{display:flex;gap:0;white-space:nowrap;animation:marqueeScroll 25s linear infinite;}
+.marquee-track:hover{animation-play-state:paused;}
+.marquee-item{font-family:'Cormorant Garamond',serif;font-size:18px;font-weight:300;color:var(--muted);padding:22px 48px;letter-spacing:.2em;display:flex;align-items:center;gap:48px;flex-shrink:0;transition:color .3s;}
+.marquee-item:hover{color:var(--gold);}
+.marquee-dot{width:5px;height:5px;background:var(--gold);border-radius:50%;flex-shrink:0;opacity:.5;}
+@keyframes marqueeScroll{from{transform:translateX(0);}to{transform:translateX(-50%);}}
+
+/* ===================== NUMBERS STRIP ===================== */
+#numbers{background:var(--black);padding:100px 60px;}
+.num-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:60px;margin-top:70px;}
+.num-item{border-top:1px solid rgba(201,168,76,.2);padding-top:36px;position:relative;overflow:hidden;}
+.num-item::before{content:'';position:absolute;top:0;left:0;width:0;height:1px;background:var(--gold);transition:width .8s ease;}
+.num-item.in::before{width:100%;}
+.num-big{font-family:'Cormorant Garamond',serif;font-size:72px;font-weight:300;color:var(--gold);line-height:1;margin-bottom:12px;}
+.num-label{font-size:10px;letter-spacing:.3em;text-transform:uppercase;color:var(--muted);margin-bottom:12px;}
+.num-desc{font-size:12px;color:var(--muted);line-height:1.9;letter-spacing:.04em;}
+
+/* ===================== PROCESS ===================== */
+#process{background:var(--char);overflow:hidden;}
+.process-header{text-align:center;margin-bottom:90px;}
+.process-steps{display:grid;grid-template-columns:repeat(4,1fr);gap:0;position:relative;}
+.process-steps::before{content:'';position:absolute;top:40px;left:12.5%;right:12.5%;height:1px;background:linear-gradient(to right,transparent,var(--gold),transparent);}
+.ps{text-align:center;padding:0 24px;}
+.ps-icon{width:80px;height:80px;border-radius:50%;background:var(--deep);border:1px solid rgba(201,168,76,.25);display:flex;align-items:center;justify-content:center;margin:0 auto 32px;font-family:'Cormorant Garamond',serif;font-size:24px;color:var(--gold);position:relative;z-index:1;transition:all .4s;cursor:none;}
+.ps:hover .ps-icon{background:rgba(201,168,76,.12);border-color:var(--gold);transform:scale(1.1);box-shadow:0 0 40px rgba(201,168,76,.2);}
+.ps-name{font-family:'Cormorant Garamond',serif;font-size:22px;margin-bottom:14px;}
+.ps-desc{font-size:12px;color:var(--muted);line-height:2;letter-spacing:.04em;}
+
+/* ===================== CLIENTS LOGO WALL ===================== */
+#clients{background:var(--deep);padding:100px 60px;}
+.clients-header{text-align:center;margin-bottom:70px;}
+.logo-grid{display:grid;grid-template-columns:repeat(5,1fr);gap:1px;background:rgba(201,168,76,.08);}
+.logo-cell{background:var(--deep);padding:44px 28px;display:flex;align-items:center;justify-content:center;transition:background .3s;cursor:none;}
+.logo-cell:hover{background:#111;}
+.logo-name{font-family:'Cormorant Garamond',serif;font-size:20px;font-weight:300;letter-spacing:.25em;color:rgba(201,168,76,.3);transition:color .3s;text-transform:uppercase;}
+.logo-cell:hover .logo-name{color:var(--gold);}
+
+/* ===================== TESTIMONIALS ===================== */
+#testimonials{background:var(--black);padding:130px 60px;overflow:hidden;}
+.test-header{text-align:center;margin-bottom:80px;}
+.test-slider{position:relative;overflow:hidden;}
+.test-track{display:flex;transition:transform .8s cubic-bezier(.23,1,.32,1);}
+.test-slide{min-width:100%;padding:0 120px;text-align:center;}
+.test-stars{display:flex;justify-content:center;gap:6px;margin-bottom:32px;}
+.star{width:14px;height:14px;background:var(--gold);clip-path:polygon(50% 0%,61% 35%,98% 35%,68% 57%,79% 91%,50% 70%,21% 91%,32% 57%,2% 35%,39% 35%);}
+.test-q{font-family:'Cormorant Garamond',serif;font-size:clamp(22px,3vw,36px);font-style:italic;font-weight:300;line-height:1.55;color:var(--white);margin-bottom:48px;}
+.test-client{display:flex;align-items:center;justify-content:center;gap:18px;}
+.test-avatar{width:52px;height:52px;border-radius:50%;background:rgba(201,168,76,.15);border:1px solid rgba(201,168,76,.3);display:flex;align-items:center;justify-content:center;font-family:'Cormorant Garamond',serif;font-size:18px;color:var(--gold);}
+.test-name{font-size:11px;letter-spacing:.2em;color:var(--gold);text-transform:uppercase;}
+.test-role{font-size:11px;color:var(--muted);letter-spacing:.1em;}
+.test-dots{display:flex;justify-content:center;gap:10px;margin-top:50px;}
+.t-dot{width:6px;height:6px;border-radius:50%;background:rgba(201,168,76,.25);cursor:none;transition:all .3s;}
+.t-dot.active{background:var(--gold);width:24px;border-radius:3px;}
+.test-arrows{display:flex;justify-content:center;gap:16px;margin-top:30px;}
+.t-arr{width:50px;height:50px;border:1px solid rgba(201,168,76,.3);background:transparent;color:var(--gold);font-size:18px;cursor:none;display:flex;align-items:center;justify-content:center;transition:all .3s;}
+.t-arr:hover{background:rgba(201,168,76,.1);border-color:var(--gold);}
+
+/* ===================== AWARDS ===================== */
+#awards{background:var(--char);padding:100px 60px;}
+.awards-header{display:grid;grid-template-columns:1fr 1fr;gap:60px;align-items:end;margin-bottom:70px;}
+.awards-list{display:flex;flex-direction:column;gap:0;}
+.award-row{display:grid;grid-template-columns:80px 1fr 200px 120px;align-items:center;gap:20px;padding:28px 0;border-bottom:1px solid rgba(255,255,255,.05);cursor:none;transition:padding .3s;}
+.award-row:first-child{border-top:1px solid rgba(255,255,255,.05);}
+.award-row:hover{padding:28px 20px;}
+.award-year{font-size:11px;color:var(--muted);letter-spacing:.15em;}
+.award-name{font-family:'Cormorant Garamond',serif;font-size:22px;font-weight:300;}
+.award-org{font-size:11px;color:var(--muted);letter-spacing:.1em;text-align:right;}
+.award-badge{font-size:9px;letter-spacing:.2em;color:var(--black);background:var(--gold);padding:6px 14px;text-transform:uppercase;font-weight:600;text-align:center;}
+
+/* ===================== CTA ===================== */
+#cta{background:linear-gradient(135deg,#0D0B00,#181200,#0D0B00);padding:150px 60px;text-align:center;border-top:1px solid rgba(201,168,76,.18);}
+#cta::before{content:'';position:absolute;inset:0;background:radial-gradient(ellipse at center,rgba(201,168,76,.09),transparent 65%);}
+.cta-inner{position:relative;max-width:750px;margin:0 auto;}
+#cta h2{margin-bottom:24px;}
+.cta-sub{font-size:13px;color:var(--muted);letter-spacing:.08em;line-height:2.1;margin-bottom:52px;}
+.cta-btns{display:flex;gap:20px;justify-content:center;}
+
+/* CTA animated border */
+.btn-animated{position:relative;background:transparent;border:none;padding:20px 52px;cursor:none;overflow:hidden;}
+.btn-animated span{position:relative;z-index:1;font-size:10px;font-weight:700;letter-spacing:.3em;text-transform:uppercase;color:var(--black);}
+.btn-animated::before{content:'';position:absolute;inset:0;background:var(--gold);transition:transform .4s cubic-bezier(.23,1,.32,1);}
+.btn-animated:hover::before{transform:scale(1.05);}
+.btn-animated:hover{box-shadow:0 25px 60px rgba(201,168,76,.3);}
+
+/* ===================== FOOTER ===================== */
+footer{background:var(--deep);border-top:1px solid rgba(255,255,255,.05);padding:80px 60px 40px;}
+.footer-top{display:grid;grid-template-columns:1.5fr 1fr 1fr 1fr;gap:60px;margin-bottom:60px;}
+.f-logo{font-family:'Cormorant Garamond',serif;font-size:36px;font-weight:300;color:var(--gold);letter-spacing:.4em;margin-bottom:18px;}
+.f-tag{font-size:11px;color:var(--muted);letter-spacing:.08em;line-height:2;margin-bottom:28px;}
+.f-social{display:flex;gap:12px;}
+.f-soc{width:36px;height:36px;border:1px solid rgba(201,168,76,.2);display:flex;align-items:center;justify-content:center;cursor:none;transition:all .3s;font-size:11px;color:var(--muted);}
+.f-soc:hover{border-color:var(--gold);color:var(--gold);background:rgba(201,168,76,.05);}
+.f-h{font-size:9px;letter-spacing:.3em;color:var(--gold);text-transform:uppercase;margin-bottom:22px;}
+.f-links{list-style:none;display:flex;flex-direction:column;gap:12px;}
+.f-links a{font-size:12px;color:var(--muted);text-decoration:none;letter-spacing:.05em;transition:color .3s;display:flex;align-items:center;gap:8px;}
+.f-links a::before{content:'';width:0;height:1px;background:var(--gold);transition:width .3s;}
+.f-links a:hover::before{width:14px;}
+.f-links a:hover{color:var(--white);}
+.footer-line{height:1px;background:rgba(255,255,255,.05);margin-bottom:28px;}
+.footer-bot{display:flex;justify-content:space-between;align-items:center;}
+.f-copy{font-size:11px;color:var(--muted);letter-spacing:.08em;}
+.f-legal{display:flex;gap:28px;}
+.f-legal a{font-size:11px;color:var(--muted);text-decoration:none;letter-spacing:.08em;transition:color .3s;}
+.f-legal a:hover{color:var(--gold);}
+
+/* Ambient glow that follows cursor */
+#ambglow{position:fixed;width:500px;height:500px;border-radius:50%;background:radial-gradient(circle,rgba(201,168,76,.04),transparent 70%);pointer-events:none;z-index:1;transform:translate(-50%,-50%);transition:left .3s ease,top .3s ease;}
+</style>
+</head>
+<body>
+
+<div id="cur"></div>
+<div id="cur-ring"></div>
+<div id="ambglow"></div>
+<canvas id="particles"></canvas>
+
+<!-- NAV -->
+<nav id="navbar">
+  <div class="logo">RAKI</div>
+  <ul class="nav-links">
+    <li><a href="#about">About</a></li>
+    <li><a href="#services">Services</a></li>
+    <li><a href="#work">Work</a></li>
+    <li><a href="#clients">Clients</a></li>
+    <li><a href="#awards">Awards</a></li>
+  </ul>
+  <button class="nav-cta">Begin</button>
+</nav>
+
+<!-- HERO -->
+<section id="hero">
+  <div class="hero-bg"></div>
+  <div class="glow-line gl1"></div>
+  <div class="glow-line gl2"></div>
+  <div class="glow-line gl3"></div>
+  <div class="orb o1"></div>
+  <div class="orb o2"></div>
+  <div class="orb o3"></div>
+
+  <div class="sphere-wrap">
+    <div class="sphere">
+      <div class="ring-orbit r1"></div>
+      <div class="ring-orbit r2"></div>
+      <div class="ring-orbit r3"></div>
+      <div class="ring-orbit r4"></div>
+      <div class="ring-orbit r5"></div>
+      <div class="sphere-core"></div>
+    </div>
+  </div>
+
+  <div class="hero-content">
+    <div class="hero-tag">Luxury Creative Agency</div>
+    <h1 id="hero-h1"><em>Crafting</em><br>the world's<br>finest brands.<span class="cursor-blink"></span></h1>
+    <p class="hero-sub">RAKI is a bespoke strategic and creative agency for brands that define their era. We don't follow trends — we architect them.</p>
+    <div class="hero-btns">
+      <button class="btn-p">Our Portfolio</button>
+      <button class="btn-g">Our Philosophy</button>
+    </div>
+  </div>
+
+  <div class="scroll-hint">
+    <div class="scroll-line"></div>
+    Discover
+  </div>
+</section>
+
+<!-- STATS -->
+<div id="stats">
+  <div class="stat rv"><div class="stat-n" data-target="14">0<sup>+</sup></div><div class="stat-l">Years of Mastery</div></div>
+  <div class="stat rv2"><div class="stat-n" data-target="380">0<sup>+</sup></div><div class="stat-l">Elite Clients</div></div>
+  <div class="stat rv3"><div class="stat-n" data-target="98">0<sup>%</sup></div><div class="stat-l">Client Retention</div></div>
+  <div class="stat rv"><div class="stat-n" data-target="31">0</div><div class="stat-l">Awards Won</div></div>
+</div>
+
+<!-- ABOUT / MANIFESTO -->
+<section id="about">
+  <div class="about-grid">
+    <div class="rv">
+      <div class="s-tag">Our Manifesto</div>
+      <div class="about-text-large">We believe great brands are not built — they are <em>conjured.</em></div>
+      <p class="about-body">At RAKI, we operate at the precise intersection of strategy and soul. Every brief we accept becomes an obsession. Every brand we touch leaves a permanent mark on culture.</p>
+      <p class="about-body">We work with a select few. We commit completely. We deliver the extraordinary.</p>
+      <div class="about-values">
+        <div class="av-item"><div class="av-title">Precision</div><div class="av-desc">Every pixel, every word, every decision — deliberate.</div></div>
+        <div class="av-item"><div class="av-title">Audacity</div><div class="av-desc">We make bold moves so our clients don't have to.</div></div>
+        <div class="av-item"><div class="av-title">Legacy</div><div class="av-desc">We build for the next decade, not the next quarter.</div></div>
+        <div class="av-item"><div class="av-title">Intimacy</div><div class="av-desc">A limited roster means unlimited dedication.</div></div>
+      </div>
+    </div>
+    <div class="rv2">
+      <div class="about-visual">
+        <div class="about-circles">
+          <div class="a-ring ar1"></div>
+          <div class="a-ring ar2"></div>
+          <div class="a-ring ar3"></div>
+        </div>
+        <div class="diamond-scene">
+          <div class="diamond">
+            <div class="d-face df1"></div>
+            <div class="d-face df2"></div>
+            <div class="d-face df3"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- SERVICES -->
+<section id="services">
+  <div class="srv-header rv">
+    <div>
+      <div class="s-tag">What We Do</div>
+      <h2>Services for<br>the <em>exceptional</em></h2>
+    </div>
+    <p class="srv-desc">Every engagement begins with deep understanding. We apply creativity and strategy in equal measure to produce work that endures.</p>
+  </div>
+  <div class="srv-grid rv2">
+    <div class="srv-card"><div class="srv-num">01</div><div class="srv-title">Brand Architecture</div><p class="srv-desc2">Positioning, naming, visual identity, and brand voice — the full structural foundation your company stands on.</p><div class="srv-arr">Explore</div></div>
+    <div class="srv-card"><div class="srv-num">02</div><div class="srv-title">Digital Experience</div><p class="srv-desc2">Immersive websites and platforms that command attention, inspire trust, and convert at every touchpoint.</p><div class="srv-arr">Explore</div></div>
+    <div class="srv-card"><div class="srv-num">03</div><div class="srv-title">Strategic Growth</div><p class="srv-desc2">Data-informed growth strategy with creative intuition. Market expansion, campaign planning, performance at scale.</p><div class="srv-arr">Explore</div></div>
+    <div class="srv-card"><div class="srv-num">04</div><div class="srv-title">Creative Direction</div><p class="srv-desc2">Art direction, photography, film, and content production that builds a visual world uniquely yours.</p><div class="srv-arr">Explore</div></div>
+    <div class="srv-card"><div class="srv-num">05</div><div class="srv-title">Luxury Positioning</div><p class="srv-desc2">Specialists in premium and ultra-premium market positioning. We speak the language of affluent audiences.</p><div class="srv-arr">Explore</div></div>
+    <div class="srv-card"><div class="srv-num">06</div><div class="srv-title">Global Campaigns</div><p class="srv-desc2">Multi-market, multi-channel campaigns orchestrated with precision across cultures, languages, and platforms.</p><div class="srv-arr">Explore</div></div>
+  </div>
+</section>
+
+<!-- WORK -->
+<section id="work">
+  <div class="work-intro rv">
+    <div><div class="s-tag">Selected Work</div><h2>Projects that<br><em>define</em> industries</h2></div>
+    <a href="#" class="work-link">View Full Portfolio</a>
+  </div>
+  <div class="work-grid rv2">
+    <div class="wc"><div class="wc-inner w1"><div class="wc-pattern"></div><div class="wc-geo"></div><div class="wc-overlay"><div class="wc-cat">Brand Identity · 2025</div><div class="wc-title">Maison Dorée</div><div class="wc-sub">Full rebrand for a Paris-based luxury fashion house.</div></div></div></div>
+    <div class="wc"><div class="wc-inner w2"><div class="wc-pattern"></div><div class="wc-geo"></div><div class="wc-overlay"><div class="wc-cat">Digital & Web · 2025</div><div class="wc-title">Stellaris Capital</div><div class="wc-sub">Award-winning site for a global investment firm.</div></div></div></div>
+    <div class="wc"><div class="wc-inner w3"><div class="wc-pattern"></div><div class="wc-geo"></div><div class="wc-overlay"><div class="wc-cat">Campaign · 2024</div><div class="wc-title">Noire Couture</div><div class="wc-sub">Global launch campaign reaching 40+ markets.</div></div></div></div>
+  </div>
+</section>
+
+<!-- MARQUEE -->
+<div id="marquee">
+  <div class="marquee-track">
+    <div class="marquee-item">Brand Strategy<span class="marquee-dot"></span></div>
+    <div class="marquee-item">Creative Direction<span class="marquee-dot"></span></div>
+    <div class="marquee-item">Luxury Positioning<span class="marquee-dot"></span></div>
+    <div class="marquee-item">Digital Excellence<span class="marquee-dot"></span></div>
+    <div class="marquee-item">Global Campaigns<span class="marquee-dot"></span></div>
+    <div class="marquee-item">Visual Identity<span class="marquee-dot"></span></div>
+    <div class="marquee-item">Brand Architecture<span class="marquee-dot"></span></div>
+    <div class="marquee-item">Strategic Growth<span class="marquee-dot"></span></div>
+    <div class="marquee-item">Brand Strategy<span class="marquee-dot"></span></div>
+    <div class="marquee-item">Creative Direction<span class="marquee-dot"></span></div>
+    <div class="marquee-item">Luxury Positioning<span class="marquee-dot"></span></div>
+    <div class="marquee-item">Digital Excellence<span class="marquee-dot"></span></div>
+    <div class="marquee-item">Global Campaigns<span class="marquee-dot"></span></div>
+    <div class="marquee-item">Visual Identity<span class="marquee-dot"></span></div>
+    <div class="marquee-item">Brand Architecture<span class="marquee-dot"></span></div>
+    <div class="marquee-item">Strategic Growth<span class="marquee-dot"></span></div>
+  </div>
+</div>
+
+<!-- NUMBERS -->
+<section id="numbers">
+  <div class="rv" style="text-align:center"><div class="s-tag center">By the Numbers</div><h2>Results that<br>speak for <em>themselves</em></h2></div>
+  <div class="num-grid">
+    <div class="num-item rv"><div class="num-big">$2.4B</div><div class="num-label">Client Revenue Influenced</div><div class="num-desc">The cumulative revenue growth our clients have achieved in the 24 months following an engagement with RAKI.</div></div>
+    <div class="num-item rv2"><div class="num-big">6×</div><div class="num-label">Average ROI</div><div class="num-desc">On average, every dollar invested in a RAKI engagement returns six dollars in measurable business value within one year.</div></div>
+    <div class="num-item rv3"><div class="num-big">40+</div><div class="num-label">Countries Reached</div><div class="num-desc">Our campaigns have resonated across more than 40 markets worldwide, from New York to Tokyo to Dubai.</div></div>
+  </div>
+</section>
+
+<!-- PROCESS -->
+<section id="process">
+  <div class="process-header rv">
+    <div class="s-tag center">How We Work</div>
+    <h2>A process as refined<br>as the <em>outcome</em></h2>
+  </div>
+  <div class="process-steps rv2">
+    <div class="ps"><div class="ps-icon">I</div><div class="ps-name">Immersion</div><p class="ps-desc">We study your world, your audience, and every gap where opportunity hides.</p></div>
+    <div class="ps"><div class="ps-icon">II</div><div class="ps-name">Conception</div><p class="ps-desc">Strategy and vision converge into a precise blueprint that guides every decision.</p></div>
+    <div class="ps"><div class="ps-icon">III</div><div class="ps-name">Creation</div><p class="ps-desc">Our artisans craft every detail — from pixel to paragraph — with total dedication.</p></div>
+    <div class="ps"><div class="ps-icon">IV</div><div class="ps-name">Elevation</div><p class="ps-desc">We launch, measure, and continuously refine until your success compounds.</p></div>
+  </div>
+</section>
+
+<!-- CLIENTS -->
+<section id="clients">
+  <div class="clients-header rv">
+    <div class="s-tag center">Who We Serve</div>
+    <h2>Trusted by<br><em>market leaders</em></h2>
+  </div>
+  <div class="logo-grid rv2">
+    <div class="logo-cell"><div class="logo-name">Meridian</div></div>
+    <div class="logo-cell"><div class="logo-name">Altus</div></div>
+    <div class="logo-cell"><div class="logo-name">Vantara</div></div>
+    <div class="logo-cell"><div class="logo-name">Obsidian</div></div>
+    <div class="logo-cell"><div class="logo-name">Celeste</div></div>
+    <div class="logo-cell"><div class="logo-name">Lumière</div></div>
+    <div class="logo-cell"><div class="logo-name">Orion</div></div>
+    <div class="logo-cell"><div class="logo-name">Axiom</div></div>
+    <div class="logo-cell"><div class="logo-name">Helios</div></div>
+    <div class="logo-cell"><div class="logo-name">Séraph</div></div>
+  </div>
+</section>
+
+<!-- TESTIMONIALS -->
+<section id="testimonials">
+  <div class="test-header rv">
+    <div class="s-tag center">Client Voices</div>
+    <h2>What our<br>clients <em>say</em></h2>
+  </div>
+  <div class="test-slider rv2">
+    <div class="test-track" id="testTrack">
+      <div class="test-slide">
+        <div class="test-stars"><div class="star"></div><div class="star"></div><div class="star"></div><div class="star"></div><div class="star"></div></div>
+        <div class="test-q">"RAKI didn't just redesign our brand — they reimagined what our company could become. The results were nothing short of transformational."</div>
+        <div class="test-client"><div class="test-avatar">AW</div><div><div class="test-name">Alexandra Whitfield</div><div class="test-role">CEO, Meridian Group</div></div></div>
+      </div>
+      <div class="test-slide">
+        <div class="test-stars"><div class="star"></div><div class="star"></div><div class="star"></div><div class="star"></div><div class="star"></div></div>
+        <div class="test-q">"Working with RAKI is unlike any agency relationship I've experienced. They think like founders, execute like artisans, and care like partners."</div>
+        <div class="test-client"><div class="test-avatar">JM</div><div><div class="test-name">James Moreau</div><div class="test-role">Founder, Stellaris Capital</div></div></div>
+      </div>
+      <div class="test-slide">
+        <div class="test-stars"><div class="star"></div><div class="star"></div><div class="star"></div><div class="star"></div><div class="star"></div></div>
+        <div class="test-q">"Our brand went from a regional player to a global icon in under 18 months. RAKI made the impossible feel inevitable."</div>
+        <div class="test-client"><div class="test-avatar">SC</div><div><div class="test-name">Sofia Chen</div><div class="test-role">CMO, Noire Couture</div></div></div>
+      </div>
+    </div>
+    <div class="test-dots"><div class="t-dot active" data-i="0"></div><div class="t-dot" data-i="1"></div><div class="t-dot" data-i="2"></div></div>
+    <div class="test-arrows"><button class="t-arr" id="tPrev">←</button><button class="t-arr" id="tNext">→</button></div>
+  </div>
+</section>
+
+<!-- AWARDS -->
+<section id="awards">
+  <div class="awards-header rv">
+    <div><div class="s-tag">Recognition</div><h2>Awards &<br><em>Accolades</em></h2></div>
+    <p style="font-size:13px;color:var(--muted);line-height:2;max-width:340px;">Three decades of industry recognition across strategy, design, and innovation. Our work speaks — the industry listens.</p>
+  </div>
+  <div class="awards-list rv2">
+    <div class="award-row"><div class="award-year">2025</div><div class="award-name">Agency of the Year</div><div class="award-org">Cannes Lions</div><div class="award-badge">Grand Prix</div></div>
+    <div class="award-row"><div class="award-year">2025</div><div class="award-name">Best Brand Identity</div><div class="award-org">The Webby Awards</div><div class="award-badge">Gold</div></div>
+    <div class="award-row"><div class="award-year">2024</div><div class="award-name">Excellence in Luxury Marketing</div><div class="award-org">Luxury Daily</div><div class="award-badge">Winner</div></div>
+    <div class="award-row"><div class="award-year">2024</div><div class="award-name">Best Digital Experience</div><div class="award-org">D&AD Awards</div><div class="award-badge">Black Pencil</div></div>
+    <div class="award-row"><div class="award-year">2023</div><div class="award-name">Creative Agency of the Decade</div><div class="award-org">AdWeek</div><div class="award-badge">Platinum</div></div>
+  </div>
+</section>
+
+<!-- CTA -->
+<section id="cta">
+  <div class="cta-inner rv">
+    <div class="s-tag center">Begin Your Journey</div>
+    <h2>Ready to build<br>something <em>extraordinary?</em></h2>
+    <p class="cta-sub">A conversation costs nothing — but it could be the beginning of everything. Let's see what's possible together.</p>
+    <div class="cta-btns">
+      <button class="btn-animated"><span>Schedule a Consultation</span></button>
+      <button class="btn-g">Download Our Deck</button>
+    </div>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer>
+  <div class="footer-top">
+    <div>
+      <div class="f-logo">RAKI</div>
+      <p class="f-tag">Crafting excellence<br>since 2011.<br>London · New York · Dubai · Paris</p>
+      <div class="f-social">
+        <div class="f-soc">in</div>
+        <div class="f-soc">ig</div>
+        <div class="f-soc">tw</div>
+        <div class="f-soc">be</div>
+      </div>
+    </div>
+    <div><div class="f-h">Services</div><ul class="f-links"><li><a href="#">Brand Architecture</a></li><li><a href="#">Digital Experience</a></li><li><a href="#">Creative Direction</a></li><li><a href="#">Strategic Growth</a></li><li><a href="#">Luxury Positioning</a></li></ul></div>
+    <div><div class="f-h">Company</div><ul class="f-links"><li><a href="#">Our Story</a></li><li><a href="#">The Team</a></li><li><a href="#">Careers</a></li><li><a href="#">Press & Media</a></li><li><a href="#">Contact</a></li></ul></div>
+    <div><div class="f-h">Contact</div><ul class="f-links"><li><a href="#">hello@rakiagency.com</a></li><li><a href="#">+44 20 7946 0200</a></li><li><a href="#">London HQ</a></li><li><a href="#">New York Office</a></li><li><a href="#">Dubai Studio</a></li></ul></div>
+  </div>
+  <div class="footer-line"></div>
+  <div class="footer-bot">
+    <div class="f-copy">© 2026 RAKI Agency. All rights reserved.</div>
+    <div class="f-legal"><a href="#">Privacy Policy</a><a href="#">Terms of Service</a><a href="#">Cookie Policy</a></div>
+  </div>
+</footer>
+
+<script>
+// CURSOR
+const cur=document.getElementById('cur'),ring=document.getElementById('cur-ring'),glow=document.getElementById('ambglow');
+let mx=0,my=0,rx=0,ry=0;
+document.addEventListener('mousemove',e=>{
+  mx=e.clientX;my=e.clientY;
+  cur.style.left=mx+'px';cur.style.top=my+'px';
+  glow.style.left=mx+'px';glow.style.top=my+'px';
+});
+(function loop(){rx+=(mx-rx)*.1;ry+=(my-ry)*.1;ring.style.left=rx+'px';ring.style.top=ry+'px';requestAnimationFrame(loop);})();
+document.querySelectorAll('button,a,.wc,.srv-card,.logo-cell,.award-row,.ps,.av-item,.t-arr').forEach(el=>{
+  el.addEventListener('mouseenter',()=>{cur.style.width='18px';cur.style.height='18px';ring.style.width='54px';ring.style.height='54px';ring.style.opacity='.9';});
+  el.addEventListener('mouseleave',()=>{cur.style.width='8px';cur.style.height='8px';ring.style.width='36px';ring.style.height='36px';ring.style.opacity='.5';});
+});
+
+// NAV SCROLL
+window.addEventListener('scroll',()=>{
+  document.getElementById('navbar').classList.toggle('scrolled',window.scrollY>60);
+});
+
+// PARTICLES
+const canvas=document.getElementById('particles');
+const ctx=canvas.getContext('2d');
+canvas.width=window.innerWidth;canvas.height=window.innerHeight;
+canvas.style.position='fixed';canvas.style.inset='0';canvas.style.zIndex='0';canvas.style.pointerEvents='none';
+const pts=Array.from({length:70},()=>({x:Math.random()*canvas.width,y:Math.random()*canvas.height,r:Math.random()*1.2+.3,vx:(Math.random()-.5)*.25,vy:(Math.random()-.5)*.25,o:Math.random()*.5+.1}));
+function drawParticles(){
+  ctx.clearRect(0,0,canvas.width,canvas.height);
+  pts.forEach(p=>{
+    p.x+=p.vx;p.y+=p.vy;
+    if(p.x<0)p.x=canvas.width;if(p.x>canvas.width)p.x=0;
+    if(p.y<0)p.y=canvas.height;if(p.y>canvas.height)p.y=0;
+    ctx.beginPath();ctx.arc(p.x,p.y,p.r,0,Math.PI*2);
+    ctx.fillStyle=`rgba(201,168,76,${p.o})`;ctx.fill();
+  });
+  // Draw connecting lines
+  for(let i=0;i<pts.length;i++){for(let j=i+1;j<pts.length;j++){
+    const d=Math.hypot(pts[i].x-pts[j].x,pts[i].y-pts[j].y);
+    if(d<120){ctx.beginPath();ctx.moveTo(pts[i].x,pts[i].y);ctx.lineTo(pts[j].x,pts[j].y);ctx.strokeStyle=`rgba(201,168,76,${.08*(1-d/120)})`;ctx.lineWidth=.5;ctx.stroke();}
+  }}
+  requestAnimationFrame(drawParticles);
+}
+drawParticles();
+window.addEventListener('resize',()=>{canvas.width=window.innerWidth;canvas.height=window.innerHeight;});
+
+// SCROLL REVEAL
+const allRv=document.querySelectorAll('.rv,.rv2,.rv3,.num-item');
+const obs=new IntersectionObserver(e=>{e.forEach(el=>{if(el.isIntersecting)el.target.classList.add('in');});},{threshold:.12});
+allRv.forEach(r=>obs.observe(r));
+
+// COUNTER ANIMATION
+const stats=document.querySelectorAll('.stat-n[data-target]');
+const cObs=new IntersectionObserver(e=>{
+  e.forEach(el=>{
+    if(el.isIntersecting){
+      const n=el.target,target=+n.dataset.target;
+      const sup=n.querySelector('sup')?.outerHTML||'';
+      let v=0;
+      const t=setInterval(()=>{v+=Math.ceil(target/40);if(v>=target){n.innerHTML=target+sup;clearInterval(t);}else{n.innerHTML=v+sup;}},30);
+      cObs.unobserve(n);
+    }
+  });
+},{threshold:.5});
+stats.forEach(s=>cObs.observe(s));
+
+// TESTIMONIAL SLIDER
+let cur_slide=0;
+const track=document.getElementById('testTrack');
+const dots=document.querySelectorAll('.t-dot');
+function goTo(i){cur_slide=i;track.style.transform=`translateX(-${i*100}%)`;dots.forEach((d,j)=>d.classList.toggle('active',j===i));}
+document.getElementById('tNext').addEventListener('click',()=>goTo((cur_slide+1)%3));
+document.getElementById('tPrev').addEventListener('click',()=>goTo((cur_slide+2)%3));
+dots.forEach(d=>d.addEventListener('click',()=>goTo(+d.dataset.i)));
+setInterval(()=>goTo((cur_slide+1)%3),5000);
+
+// 3D TILT on work cards
+document.querySelectorAll('.wc').forEach(c=>{
+  c.addEventListener('mousemove',e=>{
+    const r=c.getBoundingClientRect();
+    const x=((e.clientX-r.left)/r.width-.5)*14;
+    const y=((e.clientY-r.top)/r.height-.5)*14;
+    c.querySelector('.wc-inner').style.transform=`scale(1.06) rotateY(${x}deg) rotateX(${-y}deg)`;
+  });
+  c.addEventListener('mouseleave',()=>{c.querySelector('.wc-inner').style.transform='';});
+});
+
+// PARALLAX on hero orbs
+window.addEventListener('scroll',()=>{
+  const s=window.scrollY;
+  document.querySelectorAll('.orb').forEach((o,i)=>{o.style.transform=`translateY(${s*(.08+i*.04)}px)`;});
+  document.querySelector('.sphere-wrap').style.transform=`translateY(calc(-50% + ${s*.06}px))`;
+});
+
+// Award row hover glow effect
+document.querySelectorAll('.award-row').forEach(row=>{
+  row.addEventListener('mouseenter',()=>{row.style.background='rgba(201,168,76,.03)';});
+  row.addEventListener('mouseleave',()=>{row.style.background='';});
+});
+</script>
+</body>
+</html>
